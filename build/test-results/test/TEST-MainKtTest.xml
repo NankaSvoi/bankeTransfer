@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="MainKtTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2024-11-14T19:49:34" hostname="DESKTOP-CON78IL" time="0.046">
-  <properties/>
-  <testcase name="testNoCommissionMastercard()" classname="MainKtTest" time="0.043"/>
-  <testcase name="testCommissionMastercard()" classname="MainKtTest" time="0.001"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

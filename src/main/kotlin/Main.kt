@@ -6,6 +6,8 @@ const val MASTERCARD_FIXED_COMMISSION = 20.0
 const val VISA_COMMISSION_RATE: Double = 0.0075
 const val VISA_MIN_COMMISSION = 35.0
 
+
+
 fun main(){
     val result = calculateCommission("Mastercard", 0.0, 50000.0, 100000.0)
     println("Ваша комиссия составит $result")
