@@ -1,1 +1,0 @@
-C:\Users\nan\IdeaProjects\bankTransfer\build\classes\kotlin\main\MainKt.class
