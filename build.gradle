@@ -1,6 +1,23 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.10'
     id 'application'
+    id 'java'
+    id 'jacoco'
+}
+jacoco {
+    toolVersion = "0.8.7" // или используйте версию, совместимую с вашей сборкой
+}
+jacocoTestReport {
+    dependsOn test // Убедитесь, что тесты запускаются перед созданием отчета
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 group = 'me.nan'
@@ -11,19 +28,27 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
-test {
-    useJUnitPlatform()
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = '17' // Устанавливаем целевую версию JVM для Kotlin
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+tasks.compileTestKotlin {
+    kotlinOptions.jvmTarget = '17' // Устанавливаем целевую версию JVM для тестов на Kotlin
 }
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+tasks.compileJava {
+    sourceCompatibility = '17'  // Устанавливаем целевую версию JVM для Java
+    targetCompatibility = '17'  // Устанавливаем целевую версию JVM для Java
+}
+
+tasks.compileTestJava {
+    sourceCompatibility = '17'  // Устанавливаем целевую версию JVM для тестов на Java
+    targetCompatibility = '17'  // Устанавливаем целевую версию JVM для тестов на Java
 }
 
 application {

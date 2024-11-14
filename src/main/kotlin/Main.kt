@@ -1,40 +1,53 @@
-    const val сommission: Double = 0.0075
-        fun main(args: Array<String>) {
+    const val COMMISSION_RATE: Double = 0.0075
+    const val MIN_COMMISSION = 35.0
+    const val MASTERCARD_LIMIT = 75000
+    const val MASTERCARD_COMMISSION_RATE = 0.006
+    const val MASTERCARD_EXTRA_FEE = 20.0
+    const val DAILY_LIMIT = 150000
+    const val MONTHLY_LIMIT = 600000
 
-        val amount = 80000
-        val history = 0
+        fun main() {
 
-
-        val typeСard: String = "Mastercard"
-        when (typeСard) {
-
+        val amount = 150000
+        var dailyTransferid = 50000
+        var monthlyTransferid = 400000
+        val typeCard = "Мир"
+            if (dailyTransferid + amount > DAILY_LIMIT){
+                println("Ошибка: Превышен дневной лимит перевода")
+                return
+            }
+            if (monthlyTransferid + amount > MONTHLY_LIMIT){
+                println("Ошибка: Превышен месячный лимит перевода")
+                return
+            }
+        val commission = when (typeCard) {
             "Mastercard" -> {
-                val totalSum = amount + history
-                if (totalSum > 75000)  {
-                   println ((totalSum - 75000) * 0.006 + 20)
+                val totalSum = amount + dailyTransferid
+                if (totalSum > MASTERCARD_LIMIT) {
+                    (totalSum - MASTERCARD_LIMIT) * MASTERCARD_COMMISSION_RATE + MASTERCARD_EXTRA_FEE
+                } else 0.0
 
-            } else println(0)
-        }
-
-        }
-
-        when (typeСard) {
-
+            }
             "Visa" -> {
-        var sumCommission = amount * 0.0075
-        if (sumCommission < 35) {
-            sumCommission = 35.0
-        }
-        println("$sumCommission рублей")
+                val calculatedCommission = amount * COMMISSION_RATE
+                if (calculatedCommission < MIN_COMMISSION)
+                    MIN_COMMISSION
+                else calculatedCommission
+            }
+            "Мир" -> 0.0
+            else -> {
+                println("Неизвестный тип карты")
+                return
             }
         }
-
-        when (typeСard) {
-            "Мир" -> {
-                println("0.0 рублей")
-
-            }
+            // обновим суммы перевода за день и за месяц
+            dailyTransferid += amount
+            monthlyTransferid += amount
+            println("Комиссия: $commission рублей")
+            println("Общая сумма переводов за сегодня $dailyTransferid рублей")
+            println("Общая сумма переводов за месяц $monthlyTransferid рублей")
         }
+
 
 
     /*
@@ -60,4 +73,3 @@
     В случае превышения какого-либо из лимитов операция должна блокироваться.
 
     Итог: у вас должен быть репозиторий на GitHub, в котором будет ваш Gradle-проект. */
-    }
