@@ -13,17 +13,21 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation  'junit:junit:4.13.2'
 }
 
-
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)  // Используем Java 17 для обеих задач
+    }
 }
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"  // Устанавливаем ту же версию JVM, что и для Java
+    }
 }
 
 application {

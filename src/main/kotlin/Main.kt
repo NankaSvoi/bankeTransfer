@@ -7,54 +7,60 @@ const val VISA_COMMISSION_RATE: Double = 0.0075  // комиссия Visa, ми�
 const val VISA_MIN_COMMISSION = 35.0    //мин. комиссия  Visa
 
 
-
-fun main(){
+fun main() {
     val result = calculateCommission("Mastercard", 0.0, 0.0, 150000.0)
     println("Ваша комиссия составит $result")
 }
+
 fun calculateCommission(
     cardType: String, monthlyTransferid: Double, dailyTransferid: Double, transferAmount: Double
-): Double {
+): Pair<Double, String> {
     // прверяем дневной лимит (сумма перевода за день + текущий)
     if (dailyTransferid + transferAmount > DAILY_LIMIT) {
-        println("Операция заблокированна, превышен дневной лимит перевода")
-        return 0.0
+        return Pair (0.0, "Операция заблокированна, превышен дневной лимит перевода")
     }
     if (monthlyTransferid + transferAmount > MONTHLY_LIMIT) {
-        println("Операция заблокированна, превышен месячный лимит перевода")
-        return 0.0
+        return Pair(0.0, "Операция заблокированна, превышен месячный лимит перевода")
     }
+    return when (cardType) {
+        // Теперь расчитываем комисию в зависимости от типа карт
+        "Mastercard" -> {
+            val totalMonthlyTransfer = monthlyTransferid + transferAmount // сумма перевода с историей
+            val commission =
+             when {
+                totalMonthlyTransfer <= MASTERCARD_MONTHLY_FREE_LIMIT ->
+                    0.0 // комиссия не взимается
+                monthlyTransferid >= MASTERCARD_MONTHLY_FREE_LIMIT -> {
+                    //лимит уже превышен, комиссия на весь текущий перевод
+                    transferAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION
+                }
+                else -> {
+                    // лимит будет превышен текущим переводом
+                    val taxablAmount = totalMonthlyTransfer - MASTERCARD_MONTHLY_FREE_LIMIT
+                    taxablAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION
+                }
+            }
+            Pair (commission, "Комиссия для Mastercard:$commission")
+        }
+        "Visa" -> {
+            val calculatedCommission = transferAmount * VISA_COMMISSION_RATE
+                val commission =
+            if (calculatedCommission < VISA_MIN_COMMISSION) VISA_MIN_COMMISSION
+            else
+            calculatedCommission
+            Pair (commission, "Комиссия для Visa:$commission")
+        }
+        "Мир" -> {
+            Pair (0.0, "Комиссия для Мир: 0.0")
+        }
 
-    // Теперь расчитываем комисию в зависимости от типа карт
-    if (cardType == "Mastercard") {
-        val totalMonthlyTransfer = monthlyTransferid + transferAmount // сумма перевода с историей
-        return when{
-            totalMonthlyTransfer <= MASTERCARD_MONTHLY_FREE_LIMIT ->
-                0.0 // комиссия не взимается
-            monthlyTransferid >= MASTERCARD_MONTHLY_FREE_LIMIT -> {
-                //лимит уже превышен, комиссия на весь текущий перевод
-                transferAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION
-            }
-            else -> {
-                // лимит будет превышен текущим переводом
-                val taxablAmount = totalMonthlyTransfer - MASTERCARD_MONTHLY_FREE_LIMIT
-                taxablAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION
-            }
+        // если карта не известна, блокируем операцию
+        else -> {
+            Pair (0.0, "Тип карты не поддерживается.")
         }
     }
-    if (cardType == "Visa") {
-        val calculatedCommission = transferAmount * VISA_COMMISSION_RATE
-        if (calculatedCommission < VISA_MIN_COMMISSION) VISA_MIN_COMMISSION
-        else
-            return calculatedCommission
-    }
-    if (cardType == "Мир") {
-        0.0
-    }
-    // если карта не известна, блокируем операцию
-    println("Тип карты не поддерживается.")
-    return 0.0
 }
+
 
 /*
 За переводы с карты Mastercard комиссия не взимается, пока не превышен месячный лимит в 75 000 руб.

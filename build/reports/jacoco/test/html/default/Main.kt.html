@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">transferTask</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Main.kt</span></div><h1>Main.kt</h1><pre class="source lang-java linenums">const val DAILY_LIMIT = 150000 //РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚
+const val MONTHLY_LIMIT = 600000  //РјРµСЃСЏС‡РЅС‹Р№ Р»РёРјРёС‚
+const val MASTERCARD_MONTHLY_FREE_LIMIT = 75000  // Р±РµР·РїСЂРѕС†РµРЅС‚РЅС‹Р№ РјРµСЃСЏС‡РЅС‹Р№ Р»РёРјРёС‚ РЅР° Mastercard
+const val MASTERCARD_COMMISSION_RATE = 0.006  // РєРѕРјРёСЃСЃРёСЏ Mastercard РЅР° СЃСѓРјРјСѓ РїСЂРµРІС‹С€Р°СЋС‰СѓСЋ 75000
+const val MASTERCARD_FIXED_COMMISSION = 20.0  // РєРѕРјРёСЃСЃРёСЏ Mastercard РЅР° СЃСѓРјРјСѓ РїСЂРµРІС‹С€Р°СЋС‰СѓСЋ 75000
+const val VISA_COMMISSION_RATE: Double = 0.0075  // РєРѕРјРёСЃСЃРёСЏ Visa, РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР° РєРѕРјРёСЃСЃРёРё 35 СЂСѓР±.
+const val VISA_MIN_COMMISSION = 35.0    //РјРёРЅ. РєРѕРјРёСЃСЃРёСЏ  Visa
+
+
+fun main() {
+<span class="nc" id="L11">    val result = calculateCommission(&quot;Mastercard&quot;, 0.0, 0.0, 150000.0)</span>
+<span class="nc" id="L12">    println(&quot;Р’Р°С€Р° РєРѕРјРёСЃСЃРёСЏ СЃРѕСЃС‚Р°РІРёС‚ $result&quot;)</span>
+<span class="nc" id="L13">}</span>
+
+fun calculateCommission(
+    cardType: String, monthlyTransferid: Double, dailyTransferid: Double, transferAmount: Double
+): Pair&lt;Double, String&gt; {
+    // РїСЂРІРµСЂСЏРµРј РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚ (СЃСѓРјРјР° РїРµСЂРµРІРѕРґР° Р·Р° РґРµРЅСЊ + С‚РµРєСѓС‰РёР№)
+<span class="fc bfc" id="L19" title="All 2 branches covered.">    if (dailyTransferid + transferAmount &gt; DAILY_LIMIT) {</span>
+<span class="fc" id="L20">        return Pair (0.0, &quot;РћРїРµСЂР°С†РёСЏ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅР°, РїСЂРµРІС‹С€РµРЅ РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚ РїРµСЂРµРІРѕРґР°&quot;)</span>
+    }
+<span class="fc bfc" id="L22" title="All 2 branches covered.">    if (monthlyTransferid + transferAmount &gt; MONTHLY_LIMIT) {</span>
+<span class="fc" id="L23">        return Pair(0.0, &quot;РћРїРµСЂР°С†РёСЏ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅР°, РїСЂРµРІС‹С€РµРЅ РјРµСЃСЏС‡РЅС‹Р№ Р»РёРјРёС‚ РїРµСЂРµРІРѕРґР°&quot;)</span>
+    }
+<span class="pc bpc" id="L25" title="3 of 10 branches missed.">    return when (cardType) {</span>
+        // РўРµРїРµСЂСЊ СЂР°СЃС‡РёС‚С‹РІР°РµРј РєРѕРјРёСЃРёСЋ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° РєР°СЂС‚
+        &quot;Mastercard&quot; -&gt; {
+<span class="fc" id="L28">            val totalMonthlyTransfer = monthlyTransferid + transferAmount // СЃСѓРјРјР° РїРµСЂРµРІРѕРґР° СЃ РёСЃС‚РѕСЂРёРµР№</span>
+<span class="fc" id="L29">            val commission =</span>
+<span class="fc" id="L30">             when {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                totalMonthlyTransfer &lt;= MASTERCARD_MONTHLY_FREE_LIMIT -&gt;</span>
+<span class="fc" id="L32">                    0.0 // РєРѕРјРёСЃСЃРёСЏ РЅРµ РІР·РёРјР°РµС‚СЃСЏ</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">                monthlyTransferid &gt;= MASTERCARD_MONTHLY_FREE_LIMIT -&gt; {</span>
+                    //Р»РёРјРёС‚ СѓР¶Рµ РїСЂРµРІС‹С€РµРЅ, РєРѕРјРёСЃСЃРёСЏ РЅР° РІРµСЃСЊ С‚РµРєСѓС‰РёР№ РїРµСЂРµРІРѕРґ
+<span class="fc" id="L35">                    transferAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION</span>
+                }
+                else -&gt; {
+                    // Р»РёРјРёС‚ Р±СѓРґРµС‚ РїСЂРµРІС‹С€РµРЅ С‚РµРєСѓС‰РёРј РїРµСЂРµРІРѕРґРѕРј
+<span class="fc" id="L39">                    val taxablAmount = totalMonthlyTransfer - MASTERCARD_MONTHLY_FREE_LIMIT</span>
+<span class="fc" id="L40">                    taxablAmount * MASTERCARD_COMMISSION_RATE + MASTERCARD_FIXED_COMMISSION</span>
+                }
+            }
+<span class="fc" id="L43">            Pair (commission, &quot;РљРѕРјРёСЃСЃРёСЏ РґР»СЏ Mastercard:$commission&quot;)</span>
+        }
+        &quot;Visa&quot; -&gt; {
+<span class="fc" id="L46">            val calculatedCommission = transferAmount * VISA_COMMISSION_RATE</span>
+<span class="fc" id="L47">                val commission =</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">            if (calculatedCommission &lt; VISA_MIN_COMMISSION) VISA_MIN_COMMISSION</span>
+            else
+<span class="fc" id="L50">            calculatedCommission</span>
+<span class="fc" id="L51">            Pair (commission, &quot;РљРѕРјРёСЃСЃРёСЏ РґР»СЏ Visa:$commission&quot;)</span>
+        }
+        &quot;РњРёСЂ&quot; -&gt; {
+<span class="fc" id="L54">            Pair (0.0, &quot;РљРѕРјРёСЃСЃРёСЏ РґР»СЏ РњРёСЂ: 0.0&quot;)</span>
+        }
+
+        // РµСЃР»Рё РєР°СЂС‚Р° РЅРµ РёР·РІРµСЃС‚РЅР°, Р±Р»РѕРєРёСЂСѓРµРј РѕРїРµСЂР°С†РёСЋ
+        else -&gt; {
+<span class="fc" id="L59">            Pair (0.0, &quot;РўРёРї РєР°СЂС‚С‹ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ.&quot;)</span>
+        }
+    }
+}
+
+
+/*
+Р—Р° РїРµСЂРµРІРѕРґС‹ СЃ РєР°СЂС‚С‹ Mastercard РєРѕРјРёСЃСЃРёСЏ РЅРµ РІР·РёРјР°РµС‚СЃСЏ, РїРѕРєР° РЅРµ РїСЂРµРІС‹С€РµРЅ РјРµСЃСЏС‡РЅС‹Р№ Р»РёРјРёС‚ РІ 75 000 СЂСѓР±.
+Р•СЃР»Рё Р»РёРјРёС‚ РїСЂРµРІС‹С€РµРЅ, РєРѕРјРёСЃСЃРёСЏ СЃРѕСЃС‚Р°РІРёС‚ 0,6% + 20 СЂСѓР±.
+Р—Р° РїРµСЂРµРІРѕРґС‹ СЃ РєР°СЂС‚С‹ Visa РєРѕРјРёСЃСЃРёСЏ СЃРѕСЃС‚Р°РІРёС‚ 0,75%, РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР° РєРѕРјРёСЃСЃРёРё 35 СЂСѓР±.
+Р—Р° РїРµСЂРµРІРѕРґС‹ СЃ РєР°СЂС‚С‹ РњРёСЂ РєРѕРјРёСЃСЃРёСЏ РЅРµ РІР·РёРјР°РµС‚СЃСЏ.
+РљСЂРѕРјРµ С‚РѕРіРѕ, РІРІРµРґС‘Рј Р»РёРјРёС‚С‹ РЅР° СЃСѓРјРјС‹ РїРµСЂРµРІРѕРґР° Р·Р° СЃСѓС‚РєРё Рё Р·Р° РјРµСЃСЏС†. РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР° РїРµСЂРµРІРѕРґР° СЃ РѕРґРЅРѕР№ РєР°СЂС‚С‹:
+
+150 000 СЂСѓР±. РІ СЃСѓС‚РєРё
+600 000 СЂСѓР±. РІ РјРµСЃСЏС†
+РљРѕРјРёСЃСЃРёСЏ РІ Р»РёРјРёС‚Р°С… РЅРµ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ.
+
+Рў. Рµ. РµСЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЂРµС€РёС‚ РїРµСЂРµРІРµСЃС‚Рё РјР°С‚РµСЂРё 150 000 СЂСѓР±. СЃ РєР°СЂС‚С‹ Mastercard РІРїРµСЂРІС‹Рµ Р·Р° РјРµСЃСЏС†, С‚Рѕ РµРіРѕ РјР°С‚СЊ
+РїРѕР»СѓС‡РёС‚ РІСЃСЋ СЃСѓРјРјСѓ, Р° РєРѕРјРёСЃСЃРёСЏ Р±СѓРґРµС‚ СѓРґРµСЂР¶Р°РЅР° СЃРІРµСЂС… СЌС‚РѕРіРѕ. РЎСѓРјРјР° РєРѕРјРёСЃСЃРёРё СЃРѕСЃС‚Р°РІРёС‚ 75 000 * 0,006 + 20 = 470 СЂСѓР±.
+ (С‚. Рє. СЃ РїРµСЂРІС‹С… 75 000 СЂСѓР±. РєРѕРјРёСЃСЃРёСЏ РЅРµ РІР·РёРјР°РµС‚СЃСЏ).
+
+РќР°РїРёС€РёС‚Рµ Р°Р»РіРѕСЂРёС‚Рј СЂР°СЃС‡С‘С‚Р° РІ РІРёРґРµ С„СѓРЅРєС†РёРё, РїРµСЂРµРґР°РІР°СЏ РІ С„СѓРЅРєС†РёСЋ:
+
+С‚РёРї РєР°СЂС‚С‹ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РњРёСЂ);
+СЃСѓРјРјСѓ РїСЂРµРґС‹РґСѓС‰РёС… РїРµСЂРµРІРѕРґРѕРІ РІ СЌС‚РѕРј РјРµСЃСЏС†Рµ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ 0 СЂСѓР±Р»РµР№);
+СЃСѓРјРјСѓ СЃРѕРІРµСЂС€Р°РµРјРѕРіРѕ РїРµСЂРµРІРѕРґР°.
+Р’ СЃР»СѓС‡Р°Рµ РїСЂРµРІС‹С€РµРЅРёСЏ РєР°РєРѕРіРѕ-Р»РёР±Рѕ РёР· Р»РёРјРёС‚РѕРІ РѕРїРµСЂР°С†РёСЏ РґРѕР»Р¶РЅР° Р±Р»РѕРєРёСЂРѕРІР°С‚СЊСЃСЏ.
+
+Р�С‚РѕРі: Сѓ РІР°СЃ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂРµРїРѕР·РёС‚РѕСЂРёР№ РЅР° GitHub, РІ РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ РІР°С€ Gradle-РїСЂРѕРµРєС‚. */
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
